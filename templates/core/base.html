@@ -1,0 +1,39 @@
+{% load static %}<!DOCTYPE html>
+<html> 
+  <head> 
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href='{% static "assets/svg/logo.svg" %}'>
+    <title>{{ title }} | RepoSSH</title>{% load bootstrap5 %}
+    {% bootstrap_css %}
+    {% bootstrap_javascript %}
+  </head>  
+  <body class="d-flex flex-column min-vh-100">
+    <header>
+      <nav class="navbar navbar-expand-lg bg-body-tertiary bg-dark navbar-dark border-body">
+        <div class="container-xxl">
+          <div class="collapse navbar-collapse">
+            <a class="navbar-brand" href="/">RepoSSH</a>
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+              <li class="nav-item">
+                <a class="nav-link {% if title == 'Home' %}active{% endif %}" aria-current="page" href="/">Home</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link {% if title == 'Servers' %}active{% endif %}" aria-current="page" href="/Servers">Servers</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link {% if title == 'Config' %}active{% endif %}" aria-current="page" href="/Config">Config</a>
+              </li>
+            </ul>
+            <span class="navbar-text">
+              <a class="text-muted" href="https://github.com/YaafarDiaz"><img src='{% static "assets/svg/github.svg" %}' alt="" width="20" height="20" class="d-inline-block align-text-center"></a>
+              <a class="text-muted" href="https://www.paramiko.org/"><img src='{% static "assets/svg/python-logo.svg" %}' alt="" width="20" height="20" class="d-inline-block align-text-center"></a>
+              <a class="text-muted" href="https://www.djangoproject.com/"><img src='{% static "assets/svg/dj.svg" %}' alt="" width="20" height="20" class="d-inline-block align-text-center"></a>
+              <a class="text-muted" href="https://getbootstrap.com"><img src='{% static "assets/svg/bootstrap.svg" %}' alt="" width="20" height="20" class="d-inline-block align-text-center"></a>
+            </span>
+          </div>
+        </div>
+      </nav>
+    </header>{% block content %}{% endblock %}
+  </body>
+</html>

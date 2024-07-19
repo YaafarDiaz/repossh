@@ -1,0 +1,26 @@
+{% extends 'core/base.html' %}
+{% load static %}
+{% block content %}
+    <div class="col-md-8 mt-5 mx-auto text-center">
+      <div class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-inner">
+          <div class="carousel-item active" data-bs-interval="4000">
+            <img src="{% static 'assets/svg/home1.svg' %}" width="300" height="300" alt="RepoSSH">
+          </div>
+          <div class="carousel-item" data-bs-interval="4000">
+            <img src="{% static 'assets/svg/home2.svg' %}" width="300" height="300" alt="RepoSSH">
+          </div>
+          <div class="carousel-item" ata-bs-interval="4000">
+            <img src="{% static 'assets/svg/home3.svg' %}" width="300" height="300" alt="RepoSSH">
+          </div>
+          <div class="carousel-item" ata-bs-interval="4000">
+            <img src="{% static 'assets/svg/home4.svg' %}" width="300" height="300" alt="RepoSSH">
+          </div>
+        </div>
+      </div>
+      <h1 class="my-5 fw-semibold lh-1">Quickly check your system logs.</h1>
+      <p class="lead mb-4 fst-italic">
+        "A tool that allows you to view the event logs of your services on your servers"
+      </p>
+    </div>
+{% endblock %}

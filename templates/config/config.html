@@ -1,0 +1,109 @@
+{% extends 'core/base.html' %}
+{% block content %}
+<div class="card border border-black container my-2 py-4">
+    <div class="card-header">
+        <h3>[+] New Host</h3>
+      </div>
+        <form class="row g-3 needs-validation pt-4" novalidate>
+            <div class="col-md-4">
+              <label for="validationCustom01" class="form-label">Hostname</label>
+              <input type="text" class="form-control" id="validationCustom01" placeholder="Label that is assigned to a device" required>
+              <div class="valid-feedback">
+                Looks good!
+              </div>
+            </div>
+            <div class="col-md-4">
+              <label for="validationCustom02" class="form-label">IP Address</label>
+              <input type="text" minlength="7" maxlength="15" size="15" pattern="^(?>(\d|[1-9]\d{2}|1\d\d|2[0-4]\d|25[0-5])\.){3}(?1)$" class="form-control" id="validationCustom02" placeholder="Internet Protocol" required>
+              <div class="valid-feedback">
+                Looks good!
+              </div>
+            </div>
+            <div class="col-md-4">
+              <label for="validationCustomUsername" class="form-label">Username</label>
+              <div class="input-group has-validation">
+                <span class="input-group-text" id="inputGroupPrepend">@</span>
+                <input type="text" class="form-control" id="validationCustomUsername" placeholder="SSH User" aria-describedby="inputGroupPrepend" required>
+                <div class="invalid-feedback">
+                  Please choose a username.
+                </div>
+              </div>
+            </div>
+            <div class="col-md-12">
+              <label for="validationCustom03" class="form-label">SSHKey</label>
+              <input type="text" class="form-control" id="validationCustom03" required>
+              <div class="invalid-feedback">
+                Please provide a valid sshkey.
+              </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault">
+                    <label class="form-check-label" for="flexSwitchCheckDefault">SSH Logs</label>
+                  </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault">
+                    <label class="form-check-label" for="flexSwitchCheckDefault">System Logs</label>
+                  </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault">
+                    <label class="form-check-label" for="flexSwitchCheckDefault">Web Server Logs</label>
+                  </div>
+            </div>
+             
+            <div class="col-12">
+              <button class="btn btn-primary" type="submit">Add Host</button>
+            </div>
+          </form>
+    </div>
+    <div class="overflow-scroll card border border-black container my-2 py-4">
+        <div class="card-header">
+            <h3>Registered servers</h3>
+          </div>
+        <table class="table table-bordered table-striped">
+            <thead>
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">Hostname</th>
+                <th scope="col">IP Address</th>
+                <th scope="col">Status</th>
+                <th scope="col">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row">1</th>
+                <td>Pluto</td>
+                <td>186.190.5.43</td>
+                <td>Online</td>
+                <td></td>
+              </tr>
+              <tr>
+                <th scope="row">2</th>
+                <td>Saturn</td>
+                <td>10.100.18.32</td>
+                <td>Offline</td>
+                <td></td>
+              </tr>
+              <tr>
+                <th scope="row">3</th>
+                <td>Domain Controller</td>
+                <td>192.168.10.2</td>
+                <td>Online</td>
+                <td></td>
+              </tr>
+              <tr>
+                <th scope="row">4</th>
+                <td>Venus</td>
+                <td>172.168.23.45</td>
+                <td>Online</td>
+                <td></td>
+              </tr>
+            </tbody>
+          </table>
+    </div>
+{% endblock %}
