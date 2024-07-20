@@ -2,10 +2,11 @@ from django.shortcuts import render, reverse, HttpResponseRedirect
 from .models import Server, ServerForm
 
 def Servers(request):
-
+    Servers = Server.objects.all()
     title = "Servers"
 
     context = {
+        'Servers': Servers,
         'title': title,
     }
 
