@@ -24,12 +24,18 @@ class Server(models.Model):
     password    = models.CharField(max_length=255)
 
     class Meta:
-        ordering = ['ip']
+        ordering = ['id']
 
     def __str__(self):
         return self.host_name + ' - ' + self.ip
 
-class ServerForm(forms.Form):
-    host_name = forms.CharField(max_length=20)
-    ip = forms.CharField(max_length=15)
-    log_path = forms.CharField(max_length=255)
+class ServerForm(forms.ModelForm):
+    class Meta:
+        model = Server
+        fields = ['user', 'host_name', 'ip', 'password']
+        widgets = {
+            'user': forms.TextInput(attrs={'class': 'form-control'}),
+            'host_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'ip': forms.TextInput(attrs={'class': 'form-control'}),
+            'password': forms.PasswordInput(attrs={'class': 'form-control'}),
+        }
