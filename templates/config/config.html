@@ -1,4 +1,5 @@
 {% extends 'core/base.html' %}
+{% load static %}
 {% block content %}
 <div class="container p-0">
   <div class="container row m-0 p-0">
@@ -8,35 +9,64 @@
     </div>
       <form class="row g-3 pt-2" method="POST">
         {% csrf_token %}
-        {{ form.non_field_errors }}
+        {{ formserver.non_field_errors }}
         <div class="col-md-6">
-          {{ form.errors }}
-          <label for="{{ form.user.id_for_label }}" class="form-label">User</label>
-          {{ form.user }}
+          {{ formserver.errors }}
+          <label for="{{ formserver.user.id_for_label }}" class="form-label">User</label>
+          {{ formserver.user }}
         </div>
         <div class="col-md-6">
-          {{ form.errors }}
-          <label for="{{ form.host_name.id_for_label }}" class="form-label">Host Name</label>
-          {{ form.host_name }}
+          {{ formserver.errors }}
+          <label for="{{ formserver.host_name.id_for_label }}" class="form-label">Host Name</label>
+          {{ formserver.host_name }}
         </div>
         <div class="col-md-6">
-          {{ form.errors }}
-          <label for="{{ form.ip.id_for_label }}" class="form-label">IP Address</label>
-          {{ form.ip }} 
+          {{ formserver.errors }}
+          <label for="{{ formserver.ip.id_for_label }}" class="form-label">IP Address</label>
+          {{ formserver.ip }} 
         </div>
         <div class="col-md-6">
-          {{ form.errors }}
-          <label for="{{ form.password.id_for_label }}" class="form-label">Password</label>
-          {{ form.password }}
+          {{ formserver.errors }}
+          <label for="{{ formserver.password.id_for_label }}" class="form-label">Password</label>
+          {{ formserver.password }}
         </div>   
         <div class="col-12">
           <button class="save btn btn-primary" type="submit">Add Host</button>
         </div>
       </form>
     </div>
+    <div class="col-md-6 my-2 py-4 card border border-black">
+      <div class="card-header">
+        <h3>[+] New Service</h3>
+      </div>
+        <form class="row g-3 pt-2" method="POST">
+          {% csrf_token %}
+          {{ formservice.non_field_errors }}
+          <div class="col-md-6">
+            {{ formservice.errors }}
+            <label for="{{ formservice.name.id_for_label }}" class="form-label">Service Name</label>
+            {{ formservice.name }}
+          </div>
+          <div class="col-md-6">
+            {{ formservice.errors }}
+            <label for="{{ formservice.log_path.id_for_label }}" class="form-label">Path</label>
+            {{ formservice.log_path }}
+          </div>
+          <div class="col-md-6">
+            {{ formservice.errors }}
+            <label for="{{ formservice.port.id_for_label }}" class="form-label">Port</label>
+            {{ formservice.port }} 
+          </div>  
+          <div class="col-12">
+            <button class="save btn btn-primary" type="submit">Add Service</button>
+          </div>
+        </form>
+      </div>
     </div>
   </div>
-    <div class="overflow-scroll card border border-black container my-2 py-4">
+  <div class="container p-0">
+    <div class="container row m-0 p-0">
+    <div class="col-md-6 my-2 py-4 card border border-black">
         <div class="card-header">
             <h3>Registered servers</h3>
           </div>
@@ -55,10 +85,43 @@
                   <td>{{ server.host_name }}</td>
                   <td>{{ server.ip }}</td>
                   <td>{{ server.user }}</td>
-                  <td></td>
+                  <td>
+                    <a class="text-muted" href="#"><img src='{% static "assets/svg/edit.svg" %}' alt="" width="20" height="20" class="d-inline-block align-text-center mx-2"></a>
+                    <a class="text-muted" href="#"><img src='{% static "assets/svg/delete.svg" %}' alt="" width="20" height="20" class="d-inline-block align-text-centermx-2"></a>
+                  </td>
                 </tr>
               {% endfor %}
             </tbody>
           </table>
+    </div>
+    <div class="col-md-6 my-2 py-4 card border border-black">
+      <div class="card-header">
+          <h3>Registered Services</h3>
+        </div>
+      <table class="table table-bordered table-striped">
+          <thead>
+            <tr>
+              <th scope="col">Service</th>
+              <th scope="col">Path</th>
+              <th scope="col">Port</th>
+              <th scope="col">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for service in Services %}
+              <tr>
+                <td>{{ service.name }}</td>
+                <td>{{ service.log_path }}</td>
+                <td>{{ service.port }}</td>
+                <td>
+                  <a class="text-muted" href="#"><img src='{% static "assets/svg/edit.svg" %}' alt="" width="20" height="20" class="d-inline-block align-text-center mx-2"></a>
+                  <a class="text-muted" href="#"><img src='{% static "assets/svg/delete.svg" %}' alt="" width="20" height="20" class="d-inline-block align-text-centermx-2"></a>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+  </div>
+    </div>
     </div>
 {% endblock %}

@@ -1,5 +1,5 @@
 from django.shortcuts import render, reverse, HttpResponseRedirect
-from .models import Server, ServerForm
+from .models import Server, ServerForm, Service, ServiceForm
 
 def Servers(request):
     Servers = Server.objects.all()
@@ -13,21 +13,35 @@ def Servers(request):
     return render(request, 'servers/servers.html', context)
 
 def Config(request):
-    Servers = Server.objects.all()
     title = "Config"
-    form = ServerForm()
+    Servers = Server.objects.all()
+    formserver = ServerForm()
+    Services = Service.objects.all()
+    formservice = ServiceForm()
     context = {
     'title': title,
     'Servers': Servers,
-    'form': form,
+    'formserver': formserver,
+    'Services': Services,
+    'formservice': formservice,
     }
 
     if request.method == 'POST':
-        form = ServerForm(request.POST)
-        if form.is_valid():
-            form.save()
+        formserver = ServerForm(request.POST)
+        if formserver.is_valid():
+            formserver.save()
             url = reverse('config')
-            return HttpResponseRedirect(url)   
+            return HttpResponseRedirect(url)
+
+        formservice = ServiceForm(request.POST)
+        if formservice.is_valid():
+            formservice.save()
+            url = reverse('config')
+            return HttpResponseRedirect(url)
+        
+    else:
+        formserver = ServerForm()
+        formservice = ServiceForm()
 
     return render(request, 'config/config.html', context)
     

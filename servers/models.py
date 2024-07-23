@@ -12,10 +12,15 @@ class Service(models.Model):
     def __str__(self):
         return self.name
 
-class ServiceForm(forms.Form):
-    name = forms.CharField(max_length=20)
-    port = forms.IntegerField()
-    log_path = forms.CharField(max_length=255)
+class ServiceForm(forms.ModelForm):
+    class Meta:
+        model = Service
+        fields = ['name', 'port', 'log_path']
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'form-control'}),
+            'port': forms.NumberInput(attrs={'class': 'form-control'}),
+            'log_path': forms.TextInput(attrs={'class': 'form-control'}),
+        }
 
 class Server(models.Model):
     user        = models.CharField(max_length=20)
