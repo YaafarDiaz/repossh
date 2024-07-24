@@ -16,8 +16,8 @@ def Servers(request, pk):
 
         ssh = paramiko.SSHClient()
         ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        ssh.connect(ServerInfo.ip, service.port, ServerInfo.user, ServerInfo.password)
-        command = "cat " + service.log_path + " | grep '" + service.name.casefold() +"\['"
+        ssh.connect(ServerInfo.ip, 22, ServerInfo.user, ServerInfo.password)
+        command = "journalctl -u  " +  service.name.casefold()  
         stdin, stdout, stderr = ssh.exec_command(command)
         lines = []
 
@@ -27,6 +27,7 @@ def Servers(request, pk):
             lines.append(line)
         
         Results.append(lines)
+
         ssh.close()
 
     context = {
