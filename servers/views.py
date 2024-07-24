@@ -1,13 +1,39 @@
-from django.shortcuts import render, reverse, HttpResponseRedirect
+from django.shortcuts import render, reverse, HttpResponseRedirect, get_object_or_404
 from .models import Server, ServerForm, Service, ServiceForm
+import paramiko, re
 
-def Servers(request):
+def Servers(request, pk):
+
+    ServerInfo = get_object_or_404(Server, pk=pk)
     Servers = Server.objects.all()
     title = "Servers"
+    Services = Service.objects.all()
+    ServerName = ServerInfo.host_name
+    Results = []
+
+
+    for service in Services:
+
+        ssh = paramiko.SSHClient()
+        ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        ssh.connect(ServerInfo.ip, service.port, ServerInfo.user, ServerInfo.password)
+        command = "cat " + service.log_path + " | grep '" + service.name.casefold() +"\['"
+        stdin, stdout, stderr = ssh.exec_command(command)
+        lines = []
+
+        for line in stdout:
+            line = re.sub(r'T', ' ', line)
+            line = re.sub(r'\.\d+\+\d{2}:\d{2}', ' ', line)
+            lines.append(line)
+        
+        Results.append(lines)
+        ssh.close()
 
     context = {
-        'Servers': Servers,
         'title': title,
+        'Servers': Servers,
+        'ServerName': ServerName,
+        'Results': Results,
     }
 
     return render(request, 'servers/servers.html', context)

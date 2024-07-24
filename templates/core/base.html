@@ -22,7 +22,7 @@
                 <a class="nav-link dropdown-toggle {% if title == 'Servers' %}active{% endif %}" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Servers</a>
                 <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                   {% for server in Servers %}
-                    <li><a class="dropdown-item" href="/Servers">{{ server.host_name }}</a></li>
+                    <li><a class="dropdown-item" href="/ServerInfo/{{ server.id }}">{{ server.host_name }}</a></li>
                   {% endfor %}
                 </ul>
               </li>

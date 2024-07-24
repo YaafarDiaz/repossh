@@ -1,6 +1,31 @@
 {% extends 'core/base.html' %}
 {% block content %}
 <div class="container">
-
+    <div class="card-header my-4 text-center">
+        <h1>Logs {{ ServerName }}</h1>
+      </div>
+    <div class="col-md-10 my-2 mx-auto py-4 card border border-black">
+        <div class="card-header">
+            <h3>Logs for  </h3>
+        </div>
+        {% for result in Results %}
+        <table class="table table-bordered table-striped">
+            <thead>
+              <tr>
+                <th scope="col">Result</th>
+              </tr>
+            </thead>
+            <tbody>
+                {% for lines in result %}
+                <tr>
+                    
+                        <td>{{ lines }}</td>
+                    
+                </tr>
+                {% endfor %}
+            </tbody>
+          </table>
+          {% endfor %}
+    </div>
 </div>
 {% endblock %}
