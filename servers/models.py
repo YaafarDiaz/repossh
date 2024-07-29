@@ -3,8 +3,6 @@ from django import forms
 
 class Service(models.Model):
     name = models.CharField(max_length=20)
-    port = models.IntegerField()
-    log_path = models.CharField(max_length=255)
 
     class Meta:
         ordering = ['name']
@@ -15,11 +13,9 @@ class Service(models.Model):
 class ServiceForm(forms.ModelForm):
     class Meta:
         model = Service
-        fields = ['name', 'port', 'log_path']
+        fields = ['name']
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control'}),
-            'port': forms.NumberInput(attrs={'class': 'form-control'}),
-            'log_path': forms.TextInput(attrs={'class': 'form-control'}),
         }
 
 class Server(models.Model):
@@ -44,3 +40,15 @@ class ServerForm(forms.ModelForm):
             'ip': forms.TextInput(attrs={'class': 'form-control'}),
             'password': forms.PasswordInput(attrs={'class': 'form-control'}),
         }
+
+class Logs(models.Model):
+    host_name   = models.CharField(max_length=20)
+    date        = models.DateTimeField()
+    service     = models.CharField(max_length=100)
+    message     = models.CharField(max_length=400)
+
+    class Meta:
+        ordering = ['id']
+
+    def __str__(self):
+        return self.host_name + ' - ' + self.service

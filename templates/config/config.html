@@ -47,16 +47,6 @@
             <label for="{{ formservice.name.id_for_label }}" class="form-label">Service Name</label>
             {{ formservice.name }}
           </div>
-          <div class="col-md-6">
-            {{ formservice.errors }}
-            <label for="{{ formservice.log_path.id_for_label }}" class="form-label">Path</label>
-            {{ formservice.log_path }}
-          </div>
-          <div class="col-md-6">
-            {{ formservice.errors }}
-            <label for="{{ formservice.port.id_for_label }}" class="form-label">Port</label>
-            {{ formservice.port }} 
-          </div>  
           <div class="col-12">
             <button class="save btn btn-primary" type="submit">Add Service</button>
           </div>
@@ -86,8 +76,8 @@
                   <td>{{ server.ip }}</td>
                   <td>{{ server.user }}</td>
                   <td>
-                    <a class="text-muted" href="#"><img src='{% static "assets/svg/edit.svg" %}' alt="" width="20" height="20" class="d-inline-block align-text-center mx-2"></a>
-                    <a class="text-muted" href="#"><img src='{% static "assets/svg/delete.svg" %}' alt="" width="20" height="20" class="d-inline-block align-text-centermx-2"></a>
+                    <a class="text-muted" href="/EditServer/{{ server.id }}"><img src='{% static "assets/svg/edit.svg" %}' alt="" width="20" height="20" class="d-inline-block align-text-center mx-2"></a>
+                    <a class="text-muted" href="/DeleteServer/{{ server.id }}"><img src='{% static "assets/svg/delete.svg" %}' alt="" width="20" height="20" class="d-inline-block align-text-centermx-2"></a>
                   </td>
                 </tr>
               {% endfor %}
@@ -102,8 +92,6 @@
           <thead>
             <tr>
               <th scope="col">Service</th>
-              <th scope="col">Path</th>
-              <th scope="col">Port</th>
               <th scope="col">Action</th>
             </tr>
           </thead>
@@ -111,11 +99,9 @@
             {% for service in Services %}
               <tr>
                 <td>{{ service.name }}</td>
-                <td>{{ service.log_path }}</td>
-                <td>{{ service.port }}</td>
                 <td>
-                  <a class="text-muted" href="#"><img src='{% static "assets/svg/edit.svg" %}' alt="" width="20" height="20" class="d-inline-block align-text-center mx-2"></a>
-                  <a class="text-muted" href="#"><img src='{% static "assets/svg/delete.svg" %}' alt="" width="20" height="20" class="d-inline-block align-text-centermx-2"></a>
+                  <a class="text-muted" href="/EditService/{{ service.id }}"><img src='{% static "assets/svg/edit.svg" %}' alt="" width="20" height="20" class="d-inline-block align-text-center mx-2"></a>
+                  <a class="text-muted" href="/DeleteService/{{ service.id }}"><img src='{% static "assets/svg/delete.svg" %}' alt="" width="20" height="20" class="d-inline-block align-text-centermx-2"></a>
                 </td>
               </tr>
             {% endfor %}

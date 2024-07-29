@@ -6,9 +6,9 @@
       </div>
       <nav class="navbar bg-body-tertiary">
         <form class="container-fluid justify-content-start">
-          <button class="btn btn-outline-primary mx-auto" type="button">Service 1</button>
-          <button class="btn btn-outline-primary mx-auto" type="button">Service 2n</button>
-          <button class="btn btn-outline-primary mx-auto" type="button">Service 3</button>
+          {% for service in Services %}
+          <a class="btn btn-outline-primary mx-2" href="#" role="button">{{ service }}</a>
+          {% endfor %}
           <button class="btn btn-outline-success mx-auto" type="button">Update</button>
         </form>
       </nav>
