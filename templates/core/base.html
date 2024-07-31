@@ -19,10 +19,11 @@
                 <a class="nav-link {% if title == 'Home' %}active{% endif %}" aria-current="page" href="/">Home</a>
               </li>
               <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle {% if title == 'Servers' %}active{% endif %}" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Servers</a>
+                <a class="nav-link dropdown-toggle {% if title == 'Servers' %}active{% endif %}" href="/ServerInfo" id="navbarDropdown" data-bs-toggle="dropdown" aria-expanded="false">Servers</a>
                 <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                  <li><a class="dropdown-item" href="/ServerInfo">General</a></li>
                   {% for server in Servers %}
-                    <li><a class="dropdown-item" href="/ServerInfo/{{ server.id }}">{{ server.host_name }}</a></li>
+                    <li><a class="dropdown-item" href="/ServerInfo/{{ server.id }}/{{ service }}/">{{ server.host_name }}</a></li>
                   {% endfor %}
                 </ul>
               </li>

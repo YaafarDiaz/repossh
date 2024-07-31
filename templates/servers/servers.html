@@ -2,33 +2,35 @@
 {% block content %}
 <div class="container">
     <div class="card-header my-4 text-center">
-        <h1>Logs {{ ServerName }}</h1>
+        <h1>Logs {{ ServerInfo.host_name }}</h1>
       </div>
       <nav class="navbar bg-body-tertiary">
         <form class="container-fluid justify-content-start">
           {% for service in Services %}
-          <a class="btn btn-outline-primary mx-2" href="#" role="button">{{ service }}</a>
+          <a class="btn btn-outline-primary mx-2" href="/ServerInfo/{{ ServerInfo.id }}/{{ service.id }}" role="button">{{ service }}</a>
           {% endfor %}
-          <button class="btn btn-outline-success mx-auto" type="button">Update</button>
         </form>
       </nav>
     <div class="col-md-12 mx-auto p-4 my-4 card border border-black">
         <div class="card-header">
-            <h3>Logs for  </h3>
+            <h3>LOGS FROM {{ ServiceToLoad.name }} </h3>
         </div>
         {% for result in Results %}
         <table class="table table-bordered table-striped">
             <thead>
               <tr>
-                <th scope="col">Result</th>
+                <th scope="col">Date</th>
+                <th scope="col">Service</th>
+                <th scope="col">Message</th>
               </tr>
             </thead>
             <tbody>
                 {% for lines in result %}
+
                 <tr>
-                    
-                        <td>{{ lines }}</td>
-                    
+                  <td>{{ lines.date }}</td>
+                  <td>{{ lines.service }}</td>
+                  <td>{{ lines.message }}</td>
                 </tr>
                 {% endfor %}
             </tbody>

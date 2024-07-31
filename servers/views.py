@@ -3,43 +3,27 @@ from .models import Server, ServerForm, Service, ServiceForm, Logs
 import paramiko, re, pytz
 from datetime import datetime
 
-def Servers(request, pk):
-
-    ServerInfo = get_object_or_404(Server, pk=pk)
+def ServersInfo(request, pk, pks):
+    ServerInfo = get_object_or_404(Server, pk=pk)    
+    ServiceToLoad = get_object_or_404(Service, pk=pks)
     Servers = Server.objects.all()
     title = "Servers"
     Services = Service.objects.all()
-    ServerName = ServerInfo.host_name
     Results = []
+    if Service.objects.first():
+        FirtsService = Service.objects.first()
+    else:
+        return redirect('config')
 
-
-    for service in Services:
-        try:
-            ssh = paramiko.SSHClient()
-            ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-            ssh.connect(ServerInfo.ip, 22, ServerInfo.user, ServerInfo.password)
-            command = "journalctl -u  " +  service.name.casefold()  
-            stdin, stdout, stderr = ssh.exec_command(command)
-            lines = []
-
-            for line in stdout:
-                line = re.sub(r'T', ' ', line)
-                line = re.sub(r'\.\d+\+\d{2}:\d{2}', ' ', line)
-                lines.append(line)
-            
-            Results.append(lines)
-
-            
-
-            ssh.close()
-        except Exception as error:
-            message = "Error"
-
+    Results.append(Logs.objects.filter(service= ServiceToLoad.name))
+ 
     context = {
+        'service': FirtsService.id,
+        'ServiceToLoad': ServiceToLoad,
         'Services': Services,
         'title': title,
         'Servers': Servers,
-        'ServerName': ServerName,
+        'ServerInfo': ServerInfo,
         'Results': Results,
     }
 
@@ -51,12 +35,14 @@ def Config(request):
     formserver = ServerForm()
     Services = Service.objects.all()
     formservice = ServiceForm()
+    FirtsService = Service.objects.first()
     context = {
     'title': title,
     'Servers': Servers,
     'formserver': formserver,
     'Services': Services,
     'formservice': formservice,
+    'service': FirtsService.id,
     }
 
     if request.method == 'POST':
@@ -85,32 +71,59 @@ def UpdateLogs(request):
     for server in Servers:
 
         for service in Services:
-            try:
+            try:   
                 ssh = paramiko.SSHClient()
                 ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
                 ssh.connect(server.ip, 22, server.user, server.password)
-                command = "journalctl -u  " +  service.name.casefold()  
+                command = "journalctl -u  " +  service.name.casefold() + "| grep ^[A-Z]" 
                 stdin, stdout, stderr = ssh.exec_command(command)
-                LastUpdate = Logs.objects.filter(service=service.name).latest('date')
-                
-                for line in stdout:
-                    line = re.sub(r'T', ' ', line)
-                    line = re.sub(r'\.\d+\+\d{2}:\d{2}', ' ', line)
-                    parts = line.split()
-                    date_time = f"{parts[0]} {parts[1]} {parts[2]}"
-                    rest_of_string = line[len(date_time):].strip()
-                    server_name = rest_of_string.split(' ', 1)[0]
-                    system_message = rest_of_string[len(server_name):].strip()
-                    date_time = f'{date_time} {datetime.now().year}'
-                    date_time = datetime.strptime(date_time, '%b %d %H:%M:%S %Y')
-                    date_time = pytz.timezone('America/Bogota').localize(date_time)
-                    reg = Logs(host_name=server_name, date=date_time, service=service.name, message=system_message)
-                    if date_time > LastUpdate.date:
+
+                queryset = Logs.objects.filter(service=service.name)
+
+                if not queryset.exists():   
+                    for line in stdout:
+                        line = re.sub(r'T', ' ', line)
+                        line = re.sub(r'\.\d+\+\d{2}:\d{2}', ' ', line)
+                        parts = line.split()
+                        date_time = f"{parts[0]} {parts[1]} {parts[2]}"
+                        rest_of_string = line[len(date_time):].strip()
+                        server_name = rest_of_string.split(' ', 1)[0]
+                        system_message = rest_of_string[len(server_name):].strip()
+                        date_time = f'{date_time} {datetime.now().year}'
+                        date_time = datetime.strptime(date_time, '%b %d %H:%M:%S %Y')
+                        date_time = pytz.timezone('America/Bogota').localize(date_time)
+                        reg = Logs(host_name=server_name, date=date_time, service=service.name, message=system_message)
                         reg.save()
-                
+                else:
+                    LastUpdate = queryset.latest('date')
+                    for line in stdout:
+                        line = re.sub(r'T', ' ', line)
+                        line = re.sub(r'\.\d+\+\d{2}:\d{2}', ' ', line)
+                        parts = line.split()
+                        date_time = f"{parts[0]} {parts[1]} {parts[2]}"
+                        rest_of_string = line[len(date_time):].strip()
+                        server_name = rest_of_string.split(' ', 1)[0]
+                        system_message = rest_of_string[len(server_name):].strip()
+                        date_time = f'{date_time} {datetime.now().year}'
+                        date_time = datetime.strptime(date_time, '%b %d %H:%M:%S %Y')
+                        date_time = pytz.timezone('America/Bogota').localize(date_time)
+                        reg = Logs(host_name=server_name, date=date_time, service=service.name, message=system_message)
+                        if date_time > LastUpdate.date:
+                            reg.save()
+            
                 ssh.close()
 
             except Exception as error:
-                message = "Error"
+                print("Update Error")
 
-        return redirect('ServerInfo')
+    return redirect('Servers')
+
+def Servers(request):
+    if Service.objects.first():
+        FirtsService = Service.objects.first()
+    else:
+        return redirect('config')
+    
+    Servers = Server.objects.all()
+    context = {'title': "Servers", 'Servers': Servers, 'service': FirtsService.id }
+    return render(request, 'servers/serversInfo.html', context)

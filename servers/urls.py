@@ -3,6 +3,7 @@ from . import views
 
 urlpatterns = [
     path('Config', views.Config, name='config'),
-    path('ServerInfo/<int:pk>/', views.Servers, name='ServerInfo'),
+    path('ServerInfo/<int:pk>/<int:pks>/', views.ServersInfo, name='ServerInfo'),
+    path('ServerInfo/', views.Servers, name='Servers'),
     path('Update', views.UpdateLogs, name='UpdateLogs'),
 ]
