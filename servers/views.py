@@ -1,8 +1,14 @@
 from django.shortcuts import render, reverse, HttpResponseRedirect, get_object_or_404, redirect
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 from .models import Server, ServerForm, Service, ServiceForm, Logs
-import paramiko, re, pytz
+import paramiko, re, pytz, logging
 from datetime import datetime
 
+# Configure logging
+logger = logging.getLogger(__name__)
+
+@login_required
 def ServersInfo(request, pk, pks):
     ServerInfo = get_object_or_404(Server, pk=pk)    
     ServiceToLoad = get_object_or_404(Service, pk=pks)
@@ -29,6 +35,7 @@ def ServersInfo(request, pk, pks):
 
     return render(request, 'servers/servers.html', context)
 
+@login_required
 def Config(request):
     title = "Config"
     Servers = Server.objects.all()
@@ -49,12 +56,16 @@ def Config(request):
         formserver = ServerForm(request.POST)
         if formserver.is_valid():
             formserver.save()
+            messages.success(request, 'Server added successfully!')
+            logger.info(f"User {request.user.username} added server: {formserver.cleaned_data['host_name']}")
             url = reverse('config')
             return HttpResponseRedirect(url)
 
         formservice = ServiceForm(request.POST)
         if formservice.is_valid():
             formservice.save()
+            messages.success(request, 'Service added successfully!')
+            logger.info(f"User {request.user.username} added service: {formservice.cleaned_data['name']}")
             url = reverse('config')
             return HttpResponseRedirect(url)
         
@@ -64,17 +75,27 @@ def Config(request):
 
     return render(request, 'config/config.html', context)
     
+@login_required
 def UpdateLogs(request):
     Servers = Server.objects.all()
     Services = Service.objects.all()
     
+    updated_count = 0
+    error_count = 0
+    
     for server in Servers:
-
         for service in Services:
             try:   
                 ssh = paramiko.SSHClient()
+                # Better SSH security policy (still auto-add but log it)
                 ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-                ssh.connect(server.ip, 22, server.user, server.password)
+                
+                # Use decrypted password
+                decrypted_password = server.get_decrypted_password()
+                ssh.connect(server.ip, 22, server.user, decrypted_password, timeout=10)
+                
+                logger.info(f"Connected to {server.host_name} ({server.ip}) for service {service.name}")
+                
                 command = "journalctl -u  " +  service.name.casefold() + "| grep ^[A-Z]" 
                 stdin, stdout, stderr = ssh.exec_command(command)
 
@@ -94,6 +115,7 @@ def UpdateLogs(request):
                         date_time = pytz.timezone('America/Bogota').localize(date_time)
                         reg = Logs(host_name=server_name, date=date_time, service=service.name, message=system_message)
                         reg.save()
+                        updated_count += 1
                 else:
                     LastUpdate = queryset.latest('date')
                     for line in stdout:
@@ -110,14 +132,33 @@ def UpdateLogs(request):
                         reg = Logs(host_name=server_name, date=date_time, service=service.name, message=system_message)
                         if date_time > LastUpdate.date:
                             reg.save()
+                            updated_count += 1
             
                 ssh.close()
+                logger.info(f"Successfully updated logs from {server.host_name} for {service.name}")
 
+            except paramiko.AuthenticationException as e:
+                error_count += 1
+                logger.error(f"Authentication failed for {server.host_name} ({server.ip}): {str(e)}")
+                messages.error(request, f'Authentication failed for {server.host_name}')
+            except paramiko.SSHException as e:
+                error_count += 1
+                logger.error(f"SSH error for {server.host_name} ({server.ip}): {str(e)}")
+                messages.error(request, f'SSH error for {server.host_name}: {str(e)}')
             except Exception as error:
-                print("Update Error")
+                error_count += 1
+                logger.error(f"Update error for {server.host_name} - {service.name}: {str(error)}")
+                messages.error(request, f'Error updating {server.host_name}: {str(error)}')
 
+    if updated_count > 0:
+        messages.success(request, f'Successfully updated {updated_count} log entries')
+    if error_count > 0:
+        messages.warning(request, f'{error_count} errors occurred during update')
+    
+    logger.info(f"User {request.user.username} updated logs. Updated: {updated_count}, Errors: {error_count}")
     return redirect('Servers')
 
+@login_required
 def Servers(request):
     if Service.objects.first():
         FirtsService = Service.objects.first()
